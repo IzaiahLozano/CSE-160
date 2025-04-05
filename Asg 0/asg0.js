@@ -15,6 +15,9 @@ function main() {
 
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // var v1 = new Vector3([2.25, 2.25, 0.0]);
+  // drawVector(v1, 'red'); 
 }
 
 function drawVector(v, color){
