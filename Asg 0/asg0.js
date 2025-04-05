@@ -148,8 +148,6 @@ function areaTriangle(v1, v2) {
   // Compute the cross product
   const crossProd = Vector3.cross(v1, v2);
 
-  //var newV = new Vector3([crossProd[0], crossProd[1], crossProd[2]])
-
   // Get magnitude of the cross product vector
   const areaParallelogram = crossProd.magnitude();
 
