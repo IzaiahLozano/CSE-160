@@ -1,63 +1,117 @@
+
+
 <!DOCTYPE html>
- <html lang="en">
-   <head>
-     <meta charset="utf-8" />
-     <title>Draw a blue rectangle (canvas version)</title>
-   </head>
- 
-   <body onload="main()">
-     <canvas id="example" width="400" height="400">
-       Please use a browser that supports "canvas"
-     </canvas>
- 
-     <br/>
- 
-     <!--Vector 1-->
-     <label for="v1">V1: </label>
-     <label for="xCoord">X1</label>
-     <input type="number" id="xCoord1"/>
-     <label for="yCoord">Y1</label>
-     <input type="number" id="yCoord1"/>
- 
-     <br/>
- 
-     <!--Vector 2-->
-     <label for="v2">V2: </label>
-     <label for="xCoord">X2</label>
-     <input type="number" id="xCoord2"/>
-     <label for="yCoord">Y2</label>
-     <input type="number" id="yCoord2"/>
- 
-    <br/>
- 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Vector Drawer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+    }
+
+    canvas {
+      border: 2px solid #444;
+      background-color: #000;
+      margin-top: 20px;
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .vector-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    label {
+      margin: 0 5px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      padding: 5px;
+      border-radius: 4px;
+      border: none;
+      width: 70px;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #4caf50;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body onload="main()">
+  <h2>Vector Visualizer</h2>
+  <canvas id="example" width="400" height="400">
+    Please use a browser that supports "canvas"
+  </canvas>
+
+  <div class="controls">
+
+    <!--Vector 1-->
+    <div class="vector-group">
+      <label>V1:</label>
+      <label>X1</label><input type="number" id="xCoord1" />
+      <label>Y1</label><input type="number" id="yCoord1" />
+    </div>
+
+    <!--Vector 2-->
+    <div class="vector-group">
+      <label>V2:</label>
+      <label>X2</label><input type="number" id="xCoord2" />
+      <label>Y2</label><input type="number" id="yCoord2" />
+    </div>
+
     <!-- Draw Button -->
-    <button onclick="handleDrawEvent()">Draw</button>
- 
-    <br/>
- 
-    <!--Operations-->
-    <label for="opt">Operation: </label>
-    <select id="opt">
-      <option value="Add">Add</option>
-      <option value="Sub">Subtract</option>
-      <option value="Mul">Multiply</option>
-      <option value="Div">Divide</option>
-      <option value="Mag">Magnitude</option>
-      <option value="Norm">Normalize</option>
-      <option value="Ang">Angle between</option>
-      <option value="Area">Area</option>
-    </select>
- 
-    <!-- Scalar -->
-    <label for="opt">Scalar: </label>
-    <input type="text" id="scalar" name="scalar">
-    <br>
- 
+    <button onclick="handleDrawEvent()">Draw Vectors</button>
+
+    <!-- Operation Selector -->
+    <div class="vector-group">
+      <label>Operation:</label>
+      <select id="opt">
+        <option value="Add">Add</option>
+        <option value="Sub">Subtract</option>
+        <option value="Mul">Multiply</option>
+        <option value="Div">Divide</option>
+        <option value="Mag">Magnitude</option>
+        <option value="Norm">Normalize</option>
+        <option value="Ang">Angle between</option>
+        <option value="Area">Area</option>
+      </select>
+
+      <label>Scalar:</label>
+      <input type="text" id="scalar" name="scalar" />
+    </div>
+
     <!--Draw Button 2-->
-    <button onclick="handleDrawOperationEvent()">Draw</button>
- 
- 
-     <script src="lib/cuon-matrix-cse160.js"></script>
-     <script src="asg0.js"></script>
-   </body>
- </html>
+    <button onclick="handleDrawOperationEvent()">Run Operation</button>
+  </div>
+
+  <script src="lib/cuon-matrix-cse160.js"></script>
+  <script src="asg0.js"></script>
+</body>
+</html>
