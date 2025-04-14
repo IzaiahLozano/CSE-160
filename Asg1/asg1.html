@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Draw a point (1)</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <br>
+        <!-- Clear Canvas -->
+        <button type="button" id ="clear">Clear</button>
+    <br>
+
+    <br>
+        <!-- Size Slider -->
+        <label for="sizeSlider">Size:<span id="sizeLabel">20</span></label>
+        <input type="range" id="sizeSlider" min="1" max="40" value="20">
+    <br>
+
+    <br>
+        <!-- Shape Mode Buttons -->
+        <button id="sqrButton">Draw Square</button>
+        <button id="triButton">Draw Triangle</button>
+        <button id="circleButton">Draw Circle</button>
+        <button id="DogButton">Draw Hero</button>
+    <br>
+
+    <br>
+        <!-- Shape Color -->
+        <label for="red">Red</label>
+        <input type="range" id="red" name="red" min="0" max="10" class = "slider">
+        <label for="green">Green</label>
+        <input type="range" id="green" name="green" min="0" max="10" class = "slider">
+        <label for="blue">Blue</label>
+        <input type="range" id="blue" name="blue" min="0" max="10" class = "slider">
+    <br>
+
+    <br>
+    <!-- Segment Count Slider -->
+    <label for="segmentSlider">Segments: <span id="segmentLabel">12</span></label>
+    <input type="range" id="segmentSlider" min="3" max="100" value="12">
+    <br>
+
+    <script src="./lib/cuon-matrix-cse160.js"></script>
+    <script src="./lib/webgl-utils.js"></script>
+    <script src="./lib/webgl-debug.js"></script>
+    <script src="./lib/cuon-utils.js"></script>
+    <script src="asg1.js"></script>
+    <script src="Point.js"></script>
+    <script src="Triangle.js"></script>
+    <script src="Circle.js"></script>
+    <script src="Hero.js"></script>
+    
+  </body>
+</html>
