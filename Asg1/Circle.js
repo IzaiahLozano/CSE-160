@@ -5,7 +5,6 @@ class Circle {
       this.color = color || [1.0, 1.0, 1.0, 1.0];
       this.size = size || 5.0;
       this.segmentCount = segments || 12;
-      this.outline = 0;
     }
   
     render() {

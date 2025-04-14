@@ -31,6 +31,7 @@ var g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_shapesList = [];
 let g_selectedType = POINT;
 let g_segmentCount = 12;
+let g_rotation = 0;
 
 
 function setupWebGL(){
@@ -97,6 +98,11 @@ function addActionsForHtmlUI(){
     document.getElementById('segmentSlider').addEventListener('input', function () {g_segmentCount = parseInt(this.value);
     document.getElementById('segmentLabel').textContent = g_segmentCount;
     });
+
+    document.getElementById("rotationSlider").addEventListener("input", function(e) {
+        g_rotation = parseFloat(e.target.value);
+        document.getElementById("rotationLabel").innerText = g_rotation;
+      });
  
  }
 
@@ -136,10 +142,12 @@ function click(ev) {
     let point;
     if (g_selectedType === POINT) {
         point = new Point([x, y], color, parseFloat(g_selectedSize));
+        point.rotation = g_rotation;
         g_shapesList.push(point);
     }
     else if (g_selectedType === TRIANGLE) {
         triangle = new Triangle([x, y], color, parseFloat(g_selectedSize));
+        triangle.rotation = g_rotation;
         g_shapesList.push(triangle);
     }
     else if (g_selectedType === CIRCLE) {

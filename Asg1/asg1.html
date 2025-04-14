@@ -2,48 +2,140 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Draw a point (1)</title>
+    <title>Draw for Hero 🐾</title>
+    <link rel="icon" href="https://emoji.gg/assets/emoji/8405_dogpaw.png" />
+    <style>
+      body {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background-color: #fef9f4;
+        color: #4d2c1d;
+        text-align: center;
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 0.2em;
+        color: #9b5d33;
+      }
+
+      p {
+        max-width: 600px;
+        margin: 0 auto 20px auto;
+        line-height: 1.6;
+      }
+
+      canvas {
+        border: 2px dashed #caa472;
+        background-color: #fffaf2;
+        margin-top: 20px;
+      }
+
+      button, input[type="range"] {
+        margin: 5px;
+        padding: 10px 15px;
+        border-radius: 12px;
+        border: none;
+        background-color: #f5c38f;
+        color: #4d2c1d;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background-color: #e9a96f;
+      }
+
+      label {
+        margin: 0 5px;
+      }
+
+      .slider {
+        width: 100px;
+      }
+
+      #pictures {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      #pictures img {
+        border-radius: 12px;
+        border: 3px solid #f5c38f;
+        object-fit: cover;
+      }
+
+      #controls {
+        margin-top: 30px;
+        background-color: #fff0e1;
+        padding: 20px;
+        border-radius: 16px;
+        display: inline-block;
+      }
+
+      #bioSection {
+        margin-top: 40px;
+        background-color: #fff0e1;
+        padding: 20px;
+        border-radius: 16px;
+      }
+    </style>
   </head>
 
   <body onload="main()">
+    <h2>🎨 Draw for Hero 🐶</h2>
+
     <canvas id="webgl" width="400" height="400">
-    Please use a browser that supports "canvas"
+      Please use a browser that supports "canvas"
     </canvas>
 
-    <br>
-        <!-- Clear Canvas -->
-        <button type="button" id ="clear">Clear</button>
-    <br>
+    <div id="controls">
+      <br>
+      <button type="button" id="clear">Clear</button>
+      
+      <br>      
+      <br>
 
-    <br>
-        <!-- Size Slider -->
-        <label for="sizeSlider">Size:<span id="sizeLabel">20</span></label>
-        <input type="range" id="sizeSlider" min="1" max="40" value="20">
-    <br>
+      <label for="sizeSlider">Size: <span id="sizeLabel">20</span></label>
+      <input type="range" id="sizeSlider" min="1" max="40" value="20"><br><br>
 
-    <br>
-        <!-- Shape Mode Buttons -->
-        <button id="sqrButton">Draw Square</button>
-        <button id="triButton">Draw Triangle</button>
-        <button id="circleButton">Draw Circle</button>
-        <button id="DogButton">Draw Hero</button>
-    <br>
+      <button id="sqrButton">Draw Square</button>
+      <button id="triButton">Draw Triangle</button>
+      <button id="circleButton">Draw Circle</button>
+      <button id="DogButton">Draw Hero</button><br><br>
 
-    <br>
-        <!-- Shape Color -->
-        <label for="red">Red</label>
-        <input type="range" id="red" name="red" min="0" max="10" class = "slider">
-        <label for="green">Green</label>
-        <input type="range" id="green" name="green" min="0" max="10" class = "slider">
-        <label for="blue">Blue</label>
-        <input type="range" id="blue" name="blue" min="0" max="10" class = "slider">
-    <br>
+      <label for="red">Red</label>
+      <input type="range" id="red" name="red" min="0" max="10" class="slider">
+      <label for="green">Green</label>
+      <input type="range" id="green" name="green" min="0" max="10" class="slider">
+      <label for="blue">Blue</label>
+      <input type="range" id="blue" name="blue" min="0" max="10" class="slider"><br><br>
 
-    <br>
-    <!-- Segment Count Slider -->
-    <label for="segmentSlider">Segments: <span id="segmentLabel">12</span></label>
-    <input type="range" id="segmentSlider" min="3" max="100" value="12">
-    <br>
+      <label for="segmentSlider">Segments: <span id="segmentLabel">12</span></label>
+      <input type="range" id="segmentSlider" min="3" max="100" value="12">
+
+      <label for="rotationSlider">Rotate (degrees): <span id="rotationLabel">0</span></label>
+      <input type="range" id="rotationSlider" min="0" max="360" value="0">
+    </div>
+
+    <section id="bioSection">
+      <h2>The Goodest Boy</h2>
+      <p id="bioText">
+        On April 12th, 2025, I found out my dog, Hero, had passed away the night before. He was a fluffy sassy boy that loved treats and chasing sprinklers.
+        I was fortunate to have loved him for 10 years, but even then it still doesn't feel long enough.
+        I thought it'd be nice to dedicate this assignment to him, the goodest boy there was.
+        I love you Hero, may you have endless belly rubs and bacon treats. ❤️🥓
+      </p>
+
+      <div id="pictures">
+        <img src="Hero.jpeg" alt="Photo of Hero" width="180" height="180">
+        <img src="Sketch.jpeg" alt="Sketch of Hero" width="180" height="180">
+      </div>
+    </section>
 
     <script src="./lib/cuon-matrix-cse160.js"></script>
     <script src="./lib/webgl-utils.js"></script>
@@ -54,6 +146,5 @@
     <script src="Triangle.js"></script>
     <script src="Circle.js"></script>
     <script src="Hero.js"></script>
-    
   </body>
 </html>
