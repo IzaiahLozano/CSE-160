@@ -98,7 +98,7 @@ function animalDraw(){
     let rightLeg = new Cube();
     rightLeg.color = [0.0, 0.0, 0.0, 1.0];
     rightLeg.matrix.setTranslate(0.2, -0.7, -0.52);
-    rightLeg.matrix.rotate(g_rightLegAngle, 1, -0.3, 0);
+    rightLeg.matrix.rotate(g_rightLegAngle, 1, 0.3, 0);
     rightLeg.matrix.scale(.3, 0.3, 0.45);
     rightLeg.drawCube();
 
