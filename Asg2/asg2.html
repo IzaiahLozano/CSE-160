@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8" />
+   <title> Blocky Animal </title>
+</head>
+
+<body onload="main()">
+
+   <canvas id="asg2" width="400" height="400" style="border:1px solid #000000;">
+      Please use a browser that supports "canvas"
+   </canvas>
+
+   <br>
+
+   <button onclick="g_animate = true;">Animation ON</button>
+   <button onclick="g_animate = false;">Animation OFF</button>
+   
+   <br>
+   <!-- Camera and Joint -->
+   <label for="camera">Camera Angle:</label>
+   <input type="range" id="camera" name="camera" min="0" max="360" value="0" class = "slider">
+   <br>
+   <label for="leftupperarmangle">Left Arm Angle:</label>
+   <input type="range" id="leftUpperArm" min="-180" max="180" value="0">
+   <br>
+   <label for="leftlowerarmangle">Left Elbow Angle:</label>
+   <input type="range" id="leftLowerArm" min="-180" max="180" value="0">
+   <br>
+   <label for="leftlowerhandangle">Left Hand Angle:</label>
+   <input type="range" id="leftHand" min="-180" max="180" value="0">
+   <br>
+   <label for="rightupperarmangle">Right Arm Angle:</label>
+   <input type="range" id="rightUpperArm" min="-180" max="180" value="0">
+   <br>
+   <label for="rightlowerarmangle">Right Elbow Angle:</label>
+   <input type="range" id="rightLowerArm" min="-180" max="180" value="0">
+   <br>
+   <label for="rightlowerhandangle">Right Hand Angle:</label>
+   <input type="range" id="rightHand" min="-180" max="180" value="0">
+   <br>
+   <label for="leftlegangle">Left Leg Angle:</label>
+   <input type="range" id="leftLeg" min="-180" max="180" value="0">
+   <br>
+   <label for="rightlegangle">Right Leg Angle:</label>
+   <input type="range" id="rightLeg" min="-180" max="180" value="0">
+
+
+   <!-- javascript files containing functions for WebGL -->
+   <script src="lib/webgl-utils.js"></script>
+   <script src="lib/webgl-debug.js"></script>
+   <script src="lib/cuon-utils.js"></script>
+   <script src="lib/cuon-matrix.js"></script>
+
+   <!-- Add our asg js file -->
+   <script type=text/javascript src="asg2.js"></script>
+   <script type=text/javascript src="Cube.js"></script>
+   <script type=text/javascript src="animalDraw.js"></script>
+
+</body>
+</html>
