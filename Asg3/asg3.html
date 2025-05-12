@@ -3,27 +3,157 @@
   <head>
     <meta charset="utf-8" />
     <title>Blocky World</title>
+    <style>
+      /* General styling */
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #2b2b2b;
+        color: white;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+        overflow: hidden; /* Prevents scrollbars from appearing */
+      }
+
+      /* Header */
+      h1 {
+        font-size: 36px;
+        color: #ff5722;
+        margin-bottom: 20px;
+      }
+
+      /* Canvas */
+      canvas {
+        border: 2px solid #fff;
+        box-shadow: 0 0 10px rgba(255, 87, 34, 0.7);
+        border-radius: 10px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Slider */
+      .slider-container {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .slider-container input {
+        width: 80%;
+        max-width: 300px;
+        margin-bottom: 10px;
+      }
+
+      .slider-label {
+        font-size: 18px;
+        color: #ff9800;
+      }
+
+      #numdot {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+        color: #ff9800;
+      }
+
+      /* Button Hover Effects */
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 10px;
+        background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      input[type="range"]:hover {
+        transform: scale(1.05);
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #ff5722;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      input[type="range"]:active::-webkit-slider-thumb {
+        background: #ff9800;
+      }
+
+      /* Tooltip */
+      .tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        border-radius: 5px;
+        padding: 5px;
+        visibility: hidden;
+        font-size: 14px;
+        transition: opacity 0.3s;
+      }
+
+      .slider-container input:hover + .tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
   </head>
 
   <body onload="main()">
-    <canvas id="webgl" width="400" height="400">
-    Please use a browser that supports "canvas"
+    <h1>Welcome to Blocky World!</h1>
+    <canvas id="webgl">
+      Please use a browser that supports "canvas"
     </canvas>
+
+    <!-- Camera Control -->
+    <div class="slider-container">
+      <input type="range" min="-180" max="180" value="0" class="slider" id="cameraAngleSlider" />
+      <label class="slider-label" for="cameraAngleSlider">Camera Angle</label>
+      <div class="tooltip">Adjust the camera angle to get a better view of the world!</div>
+    </div>
+
+    <p id="numdot"></p>
+
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
     <script src="lib/cuon-utils.js"></script>
     <script src="lib/cuon-matrix.js"></script>
-
     <script src="asg3.js"></script>
     <script src="worldDraw.js"></script>
     <script src="Cube.js"></script>
     <script src="wallMesh.js"></script>
     <script src="camera.js"></script>
-  </body>
-  <p id="numdot"></p>
 
-  <p>
-    <input type ="range" min="-180" max="180" value="0" class="slider" id="cameraAngleSlider"> Camera Angle </input>
-  </p>
- 
+    <script>
+      // Display the current camera angle when the slider is adjusted
+      const cameraAngleSlider = document.getElementById('cameraAngleSlider');
+      const numdot = document.getElementById('numdot');
+
+      cameraAngleSlider.addEventListener('input', function () {
+        numdot.textContent = `Camera Angle: ${cameraAngleSlider.value}°`;
+      });
+
+      // Dynamically resize canvas on window resize
+      function resizeCanvas() {
+        const canvas = document.getElementById('webgl');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight - 200; // Leave some space for the slider
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();  // Initial resize
+    </script>
+  </body>
 </html>

@@ -1,0 +1,3 @@
+My cube file from last assignment made the project extremley laggy so I had ChatGPT refactor the block creation and cube code for a more efficient
+spawning. WallMesh.js was fully made by ChatGPT and Cube.js was altered by ChatGPT to intergrate the new file. With these new changes I also
+needed to change how my blocks were added and deleted. Again I had ChatGPT correct the code for the add and delete in camera.js. Lastly after completitng the assignment I made CHatGPT update the UI to make it more appealing. 
