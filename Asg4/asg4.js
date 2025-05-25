@@ -32,6 +32,7 @@ var g_at = new Vector3([0, 0, -100]);
 var g_up = new Vector3([0, 1, 0]);
 
 var u_spotLightDir;
+let g_spotAngle = 25.0;
 var u_spotCutoff;
 var u_spotExponent;
 var a_Normal;
@@ -189,6 +190,22 @@ function addActionsForHtmlUI() {
     const r = this.value / 100;
     g_lightColor = [r, 1.0, 1.0];
   });
+
+  document.getElementById("spotSize").addEventListener("input", function () {
+    g_spotAngle = parseFloat(this.value); // in degrees
+    document.getElementById("spotSize_val").textContent = `${g_spotAngle}°`;
+  });
+
+  ["lightx", "lighty", "lightz", "lightColor", "spotSize"].forEach((id) =>
+    syncSlider(id)
+  );
+}
+
+function syncSlider(id, varRef) {
+  const el = document.getElementById(id);
+  const label = document.getElementById(`${id}_val`);
+  el.addEventListener("input", () => (label.textContent = el.value));
+  label.textContent = el.value;
 }
 
 function setupWebGL() {
@@ -291,7 +308,7 @@ function renderAllShapes() {
     g_Camera.eye.elements[2]
   );
   let spotlightAngleDegrees = 50.0;
-  gl.uniform1f(u_spotCutoff, Math.cos((12.5 * Math.PI) / 180));
+  gl.uniform1f(u_spotCutoff, Math.cos((g_spotAngle * Math.PI) / 180));
   gl.uniform1f(u_spotExponent, 20.0);
 
   // Ground

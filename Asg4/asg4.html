@@ -1,55 +1,90 @@
-<!DOCTYPE html>
-<html>
-<head>
-   <meta charset="utf-8" />
-   <title> Light Assignment </title>
-   <link rel="shortcut icon" href="">
-</head>
+<body onload="main()" style="font-family: 'Segoe UI', sans-serif; background: #f9f9f9; color: #222; padding: 20px;">
+  <canvas id="webgl" width="400" height="400" style="border:2px solid #222; display: block; margin-bottom: 20px;"></canvas>
 
-<body onload="main()">
-   <!-- Create a canvas (400x400) Note: size and origin -->
-   <canvas id="webgl" width="400" height="400" style="border:1px solid #000000;">
-      Please use a browser that supports "canvas"
-   </canvas>
-   <br><br>
-   <!-- Camera: Move it using mouse click. You can also move in the world using wsad and q/e to pan L/R -->
-   
-   <label for="lightx">Light X</label>
-   <input type="range" id="lightx" name="lightx" min="-360" max="360" value="0" class = "slider">
-   <label for="lighty">Light Y</label>
-   <input type="range" id="lighty" name="lighty" min="-360" max="360" value="100" class = "slider"><br>
-   <label for="lightz">Light Z</label>
-   <input type="range" id="lightz" name="lightz" min="-360" max="360" value="100" class = "slider"><br>
-   <label for="lightColor">Red Hue:</label>
-   <input type="range" id="lightColor" min="0" max="100" value="100">
+  <!-- Lighting Controls -->
+  <fieldset style="margin-bottom:1.5em; padding: 1em;">
+    <legend><strong>🎛️ Lighting Controls</strong></legend>
+    <label>💡 Light X:
+      <input type="range" id="lightx" min="-360" max="360" value="0">
+      <span id="lightx_val">0</span>
+    </label><br>
+    <label>💡 Light Y:
+      <input type="range" id="lighty" min="-360" max="360" value="100">
+      <span id="lighty_val">100</span>
+    </label><br>
+    <label>💡 Light Z:
+      <input type="range" id="lightz" min="-360" max="360" value="100">
+      <span id="lightz_val">100</span>
+    </label><br>
+    <label>🎨 Red Hue:
+      <input type="range" id="lightColor" min="0" max="100" value="100">
+      <span id="lightColor_val">100</span>
+    </label>
+    <p style="color: #b30000; font-weight: bold; margin-top: 0.8em;">
+  ⚠️ Note: Light X, Y, Z sliders only take effect when 🔄 Rotating Light is turned OFF.
+</p>
+  </fieldset>
 
+  <!-- Toggle Features -->
+  <fieldset style="margin-bottom:1.5em; padding: 1em;">
+    <legend><strong>🔘 Feature Toggles</strong></legend>
+    <p>
+      🧭 Normals:
+      <button id="normal_on">ON</button>
+      <button id="normal_off">OFF</button>
+    </p>
+    <p>
+      ☀️ Main Light:
+      <button id="light_on">ON</button>
+      <button id="light_off">OFF</button>
+    </p>
+    <p>
+      🔄 Rotating Light:
+      <button id="lightanime_on">ON</button>
+      <button id="lightanime_off">OFF</button>
+    </p>
+  </fieldset>
 
-   <label for="normal_on">Normal: </label>
-   <button type="button" id="normal_on">ON</button>
-   <button type="button" id="normal_off">OFF</button><br>
-   <label for="light_on">Light: </label>
-   <button type="button" id="light_on">ON</button>
-   <button type="button" id="light_off">OFF</button><br>
-   <label for="light_on">Light Rotation: </label>
-   <button type="button" id="lightanime_on">ON</button>
-   <button type="button" id="lightanime_off">OFF</button><br>
-    <label for="spot_on">Spotlight: </label>
-   <button type="button" id="spot_on">ON</button>
-   <button type="button" id="spot_off">OFF</button><br>
+  <!-- Spotlight Angle -->
+  <fieldset style="margin-bottom:1.5em; padding: 1em;">
+    <legend><strong>🌟 Spotlight Settings</strong></legend>
+    <p>
+      🔦 Spotlight:
+      <button id="spot_on">ON</button>
+      <button id="spot_off">OFF</button>
+    </p>
+    <label>🧯 Spotlight Size:
+      <input type="range" id="spotSize" min="5" max="90" value="25">
+      <span id="spotSize_val">25°</span>
+    </label>
+    <p style="color: #cc0000; font-style: italic; margin-top: 0.5em;">
+      ⚠️ Spotlight scale only applies when the spotlight is ON.
+    </p>
+  </fieldset>
 
-   <p id="numdot" style="font-family: monospace; color: rgb(0, 0, 0);"></p>
+  <!-- Keyboard Controls -->
+  <fieldset style="margin-bottom:1.5em; padding: 1em; background: #e3f2fd;">
+    <legend><strong>🎮 Controls & Keybinds</strong></legend>
+    <ul style="margin-top: 0;">
+      <li><strong>W/S</strong> — Move Forward / Back</li>
+      <li><strong>A/D</strong> — Strafe Left / Right</li>
+      <li><strong>Q/E</strong> — Pan Left / Right</li>
+      <li>🖱️ <strong>Click + Drag</strong> — Rotate camera</li>
+    </ul>
+  </fieldset>
 
-   <script src="lib/webgl-utils.js"></script>
-    <script src="lib/webgl-debug.js"></script>
-    <script src="lib/cuon-utils.js"></script>
-    <script src="lib/cuon-matrix.js"></script>
-    <script src="asg4.js"></script>
-    <script src="Cube.js"></script>
-    <script src="Sphere.js"></script>
-     <script src="worldDraw.js"></script>
-    <script src="wallMesh.js"></script>
-    <script src="camera.js"></script>
-    
+  <!-- FPS Monitor -->
+  <p id="numdot" style="font-family: monospace; color: #444;"></p>
 
+  <!-- Scripts -->
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/webgl-debug.js"></script>
+  <script src="lib/cuon-utils.js"></script>
+  <script src="lib/cuon-matrix.js"></script>
+  <script src="asg4.js"></script>
+  <script src="Cube.js"></script>
+  <script src="Sphere.js"></script>
+  <script src="worldDraw.js"></script>
+  <script src="wallMesh.js"></script>
+  <script src="camera.js"></script>
 </body>
-</html>
