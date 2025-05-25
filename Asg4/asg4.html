@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="utf-8" />
+   <title> Light Assignment </title>
+   <link rel="shortcut icon" href="">
+</head>
+
+<body onload="main()">
+   <!-- Create a canvas (400x400) Note: size and origin -->
+   <canvas id="webgl" width="400" height="400" style="border:1px solid #000000;">
+      Please use a browser that supports "canvas"
+   </canvas>
+   <br><br>
+   <!-- Camera: Move it using mouse click. You can also move in the world using wsad and q/e to pan L/R -->
+   
+   <label for="lightx">Light X</label>
+   <input type="range" id="lightx" name="lightx" min="-360" max="360" value="0" class = "slider">
+   <label for="lighty">Light Y</label>
+   <input type="range" id="lighty" name="lighty" min="-360" max="360" value="100" class = "slider"><br>
+   <label for="lightz">Light Z</label>
+   <input type="range" id="lightz" name="lightz" min="-360" max="360" value="100" class = "slider"><br>
+   <label for="lightColor">Red Hue:</label>
+   <input type="range" id="lightColor" min="0" max="100" value="100">
+
+
+   <label for="normal_on">Normal: </label>
+   <button type="button" id="normal_on">ON</button>
+   <button type="button" id="normal_off">OFF</button><br>
+   <label for="light_on">Light: </label>
+   <button type="button" id="light_on">ON</button>
+   <button type="button" id="light_off">OFF</button><br>
+   <label for="light_on">Light Rotation: </label>
+   <button type="button" id="lightanime_on">ON</button>
+   <button type="button" id="lightanime_off">OFF</button><br>
+    <label for="spot_on">Spotlight: </label>
+   <button type="button" id="spot_on">ON</button>
+   <button type="button" id="spot_off">OFF</button><br>
+
+   <p id="numdot" style="font-family: monospace; color: rgb(0, 0, 0);"></p>
+
+   <script src="lib/webgl-utils.js"></script>
+    <script src="lib/webgl-debug.js"></script>
+    <script src="lib/cuon-utils.js"></script>
+    <script src="lib/cuon-matrix.js"></script>
+    <script src="asg4.js"></script>
+    <script src="Cube.js"></script>
+    <script src="Sphere.js"></script>
+     <script src="worldDraw.js"></script>
+    <script src="wallMesh.js"></script>
+    <script src="camera.js"></script>
+    
+
+</body>
+</html>
