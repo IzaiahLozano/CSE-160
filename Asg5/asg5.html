@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bremuda Tetrahedron</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+    <script
+      async
+      src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
+    ></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.153.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+
+    <button
+      id="toggleFollowCam"
+      style="position: absolute; top: 10px; left: 10px; z-index: 1"
+    >
+      Toggle Follow Camera
+    </button>
+
+    <button
+      id="showControls"
+      style="position: absolute; top: 10px; right: 10px; z-index: 1"
+    >
+      Show Controls
+    </button>
+
+    <div
+      id="controlsOverlay"
+      style="
+        position: absolute;
+        top: 50px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 14px;
+        max-width: 300px;
+        display: none;
+        z-index: 2;
+      "
+    >
+      <strong>Controls:</strong><br /><br />
+      <u>Spaceship:</u><br />
+      W / S: Forward / Backward<br />
+      A / D: Roll Left / Right<br />
+      R / F: Move Up / Down<br />
+      Arrow Keys: Pitch / Yaw<br /><br />
+      <u>Camera:</u><br />
+      Mouse Drag: Orbit View<br />
+      Mouse Scroll: Zoom<br />
+      Toggle Follow Cam: Button on top left
+    </div>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
+      import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+      const canvas = document.querySelector("#c");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("black");
+
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        100
+      );
+      camera.position.set(0, 5, 15);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0, 0);
+      controls.update();
+      let followCamEnabled = false;
+      const followCamOffset = new THREE.Vector3(0, 5, -10);
+
+      document
+        .getElementById("toggleFollowCam")
+        .addEventListener("click", () => {
+          followCamEnabled = !followCamEnabled;
+          controls.enabled = !followCamEnabled;
+        });
+
+      // Lights
+      scene.add(new THREE.AmbientLight(0x290066, 0.5));
+      const dirLight = new THREE.DirectionalLight(0x000000, 1);
+      dirLight.position.set(5, 10, 7.5);
+      scene.add(dirLight);
+      const topspotLight = new THREE.SpotLight(0x00ffcc, 1);
+      topspotLight.position.set(20, -55, 20);
+      topspotLight.angle = Math.PI / 6;
+      topspotLight.penumbra = 0.5;
+      topspotLight.castShadow = true;
+      scene.add(topspotLight);
+
+      // const spotHelper = new THREE.SpotLightHelper(topspotLight);
+      // scene.add(spotHelper);
+
+      const btmspotLight = new THREE.SpotLight(0xa300cc, 1);
+      btmspotLight.position.set(-20, 55, 20);
+      btmspotLight.angle = Math.PI / 6;
+      btmspotLight.penumbra = 0.5;
+      btmspotLight.castShadow = true;
+      scene.add(btmspotLight);
+
+      // const sspotHelper = new THREE.SpotLightHelper(btmspotLight);
+      // scene.add(sspotHelper);
+
+      // Fog sphere 
+      const fogUniforms = {
+        uTime: { value: 0 },
+      };
+
+      const fogMaterial = new THREE.ShaderMaterial({
+        uniforms: fogUniforms,
+        vertexShader: `
+      varying vec3 vWorldPosition;
+      void main() {
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
+        gl_Position = projectionMatrix * viewMatrix * worldPosition;
+      }
+    `,
+        fragmentShader: `
+  varying vec3 vWorldPosition;
+  uniform float uTime;
+
+  float hash(vec3 p) {
+    return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453123);
+  }
+
+  float noise(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+
+    f = f * f * (3.0 - 2.0 * f);
+
+    float n = mix(
+      mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),
+          mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+      mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
+          mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y),
+      f.z);
+    return n;
+  }
+
+  float fbm(vec3 p) {
+    float total = 0.0;
+    float amplitude = 0.4;
+    for (int i = 0; i < 7; i++) {
+      total += noise(p) * amplitude;
+      p *= 3.0;
+      amplitude *= 0.5;
+    }
+    return total;
+  }
+
+  void main() {
+    vec3 pos = vWorldPosition * 0.1;
+    pos.z += uTime * 0.2;
+
+    float fog = fbm(pos);
+    fog = smoothstep(0.3, 0.7, fog);
+
+    vec3 fogColor = vec3(0.8, 0.2, 0.9);
+    gl_FragColor = vec4(fogColor, fog * 0.55);
+  }
+`,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.BackSide,
+      });
+
+      const fogSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(80, 104, 104),
+        fogMaterial
+      );
+      scene.add(fogSphere);
+
+      // Skybox
+
+      const cubeTextureLoader = new THREE.CubeTextureLoader();
+      const skyboxUrls = [
+        "./textures/right.jpg",
+        "./textures/front.jpg",
+        "./textures/top.jpg",
+        "./textures/btm.jpg",
+        "./textures/bck.jpg",
+        "./textures/left.jpg",
+      ];
+      const skyboxTexture = cubeTextureLoader.load(skyboxUrls);
+      scene.background = skyboxTexture;
+
+      // Asteroids
+
+      const asteroids = [];
+      const asteroidData = [];
+      const loader = new THREE.TextureLoader();
+
+      loader.load("./textures/coral_fort_wall_02_diff_4k.jpg", (diffuse) => {
+        loader.load("./textures/bumpy.jpg", (bump) => {
+          const material = new THREE.MeshPhongMaterial({
+            map: diffuse,
+            bumpMap: bump,
+            bumpScale: Math.random() * 1 + 0.5,
+          });
+
+          const asteroidCount = 75;
+          for (let i = 0; i < asteroidCount; i++) {
+            const radius = Math.random() * 0.2 + 0.7;
+            const geometry = new THREE.SphereGeometry(radius, 32, 32);
+            const sphere = new THREE.Mesh(geometry, material);
+
+            sphere.position.set(
+              (Math.random() - 0.5) * 100,
+              (Math.random() - 0.5) * 100,
+              (Math.random() - 0.5) * 100
+            );
+
+            const velocity = new THREE.Vector3(
+              (Math.random() - 0.5) * 0.02,
+              (Math.random() - 0.5) * 0.02,
+              (Math.random() - 0.5) * 0.02
+            );
+
+            scene.add(sphere);
+            asteroids.push(sphere);
+            asteroidData.push({ mesh: sphere, velocity });
+          }
+        });
+      });
+
+      // Star
+
+      const stars = [];
+      const starCount = 500;
+      const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+      for (let i = 0; i < starCount; i++) {
+        const geometry = new THREE.ConeGeometry(0.1, 0.3, 3); 
+        const star = new THREE.Mesh(geometry, starMaterial.clone());
+
+        star.position.set(
+          (Math.random() - 0.5) * 100, 
+          (Math.random() - 0.5) * 100,
+          (Math.random() - 0.5) * 100
+        );
+
+        star.rotation.set(
+          Math.random() * Math.PI,
+          Math.random() * Math.PI,
+          Math.random() * Math.PI
+        );
+
+        scene.add(star);
+        stars.push({
+          mesh: star,
+          baseScale: Math.random() * 0.5 + 0.5,
+          twinkleOffset: Math.random() * 100,
+        });
+      }
+
+      // OBJ Model
+
+      let ship;
+
+      const mtlLoader = new MTLLoader();
+      mtlLoader.load("./ship/materials.mtl", (materials) => {
+        materials.preload();
+        const objLoader = new OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.load("./ship/model.obj", (obj) => {
+          obj.position.set(0, 0, 5);
+          obj.scale.set(3, 3, 3);
+          scene.add(obj);
+          ship = obj;
+          const shipLight = new THREE.PointLight(0xe6ffe6, 0.4, 5); // color, intensity, distance
+          shipLight.position.set(0, 0.4, 0); 
+
+          ship.add(shipLight);
+        });
+      });
+
+      const keysPressed = {};
+
+      window.addEventListener("keydown", (event) => {
+        keysPressed[event.key.toLowerCase()] = true;
+      });
+
+      window.addEventListener("keyup", (event) => {
+        keysPressed[event.key.toLowerCase()] = false;
+      });
+
+
+      // Spaceship Movement
+
+      const shipVelocity = new THREE.Vector3();
+      const shipAcceleration = 0.002;
+      const shipDamping = 0.98;
+      const rotationSpeed = 0.02;
+
+      function updateShipControls() {
+        if (!ship) return;
+
+        // Rotation
+        if (keysPressed["arrowleft"]) ship.rotation.y += rotationSpeed; // Yaw left
+        if (keysPressed["arrowright"]) ship.rotation.y -= rotationSpeed; // Yaw right
+        if (keysPressed["arrowup"]) ship.rotation.x += rotationSpeed; // Pitch up
+        if (keysPressed["arrowdown"]) ship.rotation.x -= rotationSpeed; // Pitch down
+        if (keysPressed["d"]) ship.rotation.z += rotationSpeed; // Roll left
+        if (keysPressed["a"]) ship.rotation.z -= rotationSpeed; // Roll right
+
+        // Movement
+        const direction = new THREE.Vector3();
+        if (keysPressed["s"]) direction.z = -1;
+        if (keysPressed["w"]) direction.z = 1;
+        if (keysPressed["r"]) direction.y = 1;
+        if (keysPressed["f"]) direction.y = -1;
+
+        direction
+          .normalize()
+          .applyEuler(ship.rotation)
+          .multiplyScalar(shipAcceleration);
+        shipVelocity.add(direction);
+        shipVelocity.multiplyScalar(shipDamping);
+        ship.position.add(shipVelocity);
+      }
+
+
+      // Trail
+
+      const particleCount = 100;
+      const particles = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      particles.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
+
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0xffaa00,
+        size: 0.1,
+        transparent: true,
+        opacity: 0.7,
+      });
+
+      const particleSystem = new THREE.Points(particles, particleMaterial);
+      scene.add(particleSystem);
+
+      let lastTrailPos = new THREE.Vector3();
+      function updateParticles() {
+        if (!ship) return;
+
+        const rearOffset = new THREE.Vector3(0, 0, 1.5).applyEuler(
+          ship.rotation
+        );
+        const rearPosition = ship.position.clone().sub(rearOffset);
+
+        const positions = particleSystem.geometry.attributes.position.array;
+
+        for (let i = positions.length - 3; i >= 3; i--) {
+          positions[i] = positions[i - 3];
+        }
+
+        positions[0] = rearPosition.x;
+        positions[1] = rearPosition.y;
+        positions[2] = rearPosition.z;
+
+        lastTrailPos.copy(rearPosition);
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+      }
+
+      // Cube Wave
+
+      const cubeGroup = new THREE.Group();
+      scene.add(cubeGroup); 
+
+      const gridSize = 40;
+      const spacing = 2;
+      const cubes = [];
+
+      const cubeMaterial = new THREE.MeshStandardMaterial({
+        color: 0x33ffff,
+        emissive: 0x33ffff, 
+        emissiveIntensity: 1.5, 
+      });
+
+      for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+          const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+          const cube = new THREE.Mesh(geometry, cubeMaterial);
+
+          cube.position.x = (i - gridSize / 2) * spacing;
+          cube.position.z = (j - gridSize / 2) * spacing;
+          cube.position.y = 0;
+
+          cubeGroup.add(cube);
+          cubes.push(cube);
+        }
+      }
+
+      cubeGroup.position.y = -25;
+
+      function animate(time) {
+        requestAnimationFrame(animate);
+
+        const t = time * 0.001;
+
+        cubes.forEach((cube) => {
+          const waveX = Math.sin(t + cube.position.x * 0.5);
+          const waveZ = Math.cos(t + cube.position.z * 0.5);
+          cube.position.y = -1 * (waveX + waveZ);
+        });
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+
+      // Update Motion
+
+      function render(time) {
+        time *= 0.001;
+        fogUniforms.uTime.value = time;
+
+        updateShipControls();
+        updateParticles();
+
+        asteroids.forEach((asteroid, ndx) => {
+          const speed = ndx * 0.01;
+          const rot = time * speed;
+          asteroid.rotation.x = rot;
+          asteroid.rotation.y = rot;
+        });
+
+        asteroidData.forEach((data) => {
+          data.mesh.rotation.x += 0.001;
+          data.mesh.rotation.y += 0.001;
+
+          data.mesh.position.add(data.velocity);
+
+          if (data.mesh.position.length() > 75) {
+            data.mesh.position.set(
+              (Math.random() - 0.5) * 100,
+              (Math.random() - 0.5) * 100,
+              (Math.random() - 0.5) * 100
+            );
+
+            data.velocity.set(
+              (Math.random() - 0.5) * 0.02,
+              (Math.random() - 0.5) * 0.02,
+              (Math.random() - 0.5) * 0.02
+            );
+          }
+        });
+
+        stars.forEach(({ mesh, baseScale, twinkleOffset }) => {
+          const scale = baseScale + Math.sin(time * 2 + twinkleOffset) * 0.2;
+          mesh.scale.set(scale, scale, scale);
+        });
+
+        if (followCamEnabled && ship) {
+          const offset = followCamOffset.clone().applyEuler(ship.rotation);
+          const desiredPosition = ship.position.clone().add(offset);
+          camera.position.lerp(desiredPosition, 0.1); 
+          camera.lookAt(ship.position);
+        } else {
+          controls.update();
+        }
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(render);
+      }
+
+      requestAnimationFrame(render);
+
+      // Show/hide controls overlay
+      const controlsBtn = document.getElementById("showControls");
+      const controlsOverlay = document.getElementById("controlsOverlay");
+
+      controlsBtn.addEventListener("click", () => {
+        controlsOverlay.style.display =
+          controlsOverlay.style.display === "none" ? "block" : "none";
+      });
+      
+    </script>
+  </body>
+</html>
